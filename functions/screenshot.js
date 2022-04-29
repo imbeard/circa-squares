@@ -27,7 +27,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   });
 
   const page = await browser.newPage();
-  if(url.indexOf('instagram') > -1){
+/*   if(url.indexOf('instagram') > -1){
     await page.goto('https://www.instagram.com/accounts/login/');
 
     await page.waitFor('input[name=username]', { visible: true });
@@ -40,7 +40,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
     await page.waitForTimeout(100);
     const [ signin ] = await page.$x('//button[contains(.,"Log in")]');
     await signin.click({ delay: 30 });
-  }
+  } */
   
 
   if(!withJs) {
