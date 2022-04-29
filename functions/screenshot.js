@@ -27,19 +27,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   });
 
   const page = await browser.newPage();
-   if(url.indexOf('instagram') > -1){
-    await page.goto(url);
 
-    await page.waitForSelector('[type=submit]', {
-      state: 'visible',
-    });
-
-    await page.type('[name=username]', 'elbarbabrb'); // ->
-    await page.type('[type="password"]', 'cn4Wi3DpKDc6Jv'); // ->
-
-    await page.click('[type=submit]');
-    await page.waitForSelector('[placeholder=Search]', { state: 'visible' });
-  } 
   
 
   if(!withJs) {
@@ -62,6 +50,21 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
     await page.evaluate(() => window.stop());
   }
 
+   if(url.indexOf('instagram') > -1){
+    await page.goto(url);
+
+    await page.waitForSelector('[type=submit]', {
+      state: 'visible',
+    });
+
+    await page.type('[name=username]', 'elbarbabrb'); // ->
+    await page.type('[type="password"]', 'cn4Wi3DpKDc6Jv'); // ->
+
+    await page.click('[type=submit]');
+    await page.waitForSelector('[placeholder=Search]', { state: 'visible' });
+  } 
+  
+
   // let statusCode = response.status();
   // TODO handle 4xx/5xx status codes better
 
@@ -83,6 +86,8 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   }
 
   let output = await page.screenshot(options);
+
+
 
   await browser.close();
 
