@@ -31,13 +31,13 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
     await page.goto('https://www.instagram.com/accounts/login/');
 
     await page.waitFor('input[name=username]', { visible: true });
-    await delay(100);
+    await page.waitForTimeout(100);
     await page.type('input[name=username]', 'elbarbabrb', { delay: 50 });
 
-    await delay(100);
+    await page.waitForTimeout(100);
     await page.type('input[name=password]', 'cn4Wi3DpKDc6Jv', { delay: 50 });
 
-    await delay(100);
+    await page.waitForTimeout(100);
     const [ signin ] = await page.$x('//button[contains(.,"Log in")]');
     await signin.click({ delay: 30 });
   }
