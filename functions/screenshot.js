@@ -1,7 +1,5 @@
 const { builder } = require("@netlify/functions");
 const chromium = require("chrome-aws-lambda");
-const PuppeteerInstagram = require('puppeteer-instagram');
-
 
 function isFullUrl(url) {
   try {
@@ -14,14 +12,6 @@ function isFullUrl(url) {
 }
 
 async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait, timeout = 8500 }) {
-
- if (url.indexOf("instagram") > -1) {
-   
-    const instagram = new PuppeteerInstagram()
-
-    await instagram.signin({ username: 'elbarbabrb', password: 'cn4Wi3DpKDc6Jv' })
- }
-
   // Must be between 3000 and 8500
   timeout = Math.min(Math.max(timeout, 3000), 8500);
 
@@ -81,9 +71,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   let output = await page.screenshot(options);
 
   await browser.close();
-  if (instagram){
-    await instagram.close()
-  }
+
   return output;
 }
 
