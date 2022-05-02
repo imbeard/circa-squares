@@ -202,15 +202,15 @@ exports.handler = async function (event) {
 
     // output to Function logs
     console.log(url, format, { viewport }, { size }, { dpr }, { aspectratio });
-
-    return {
+    return output
+/*     return {
       statusCode: 202,
       headers: {
         "content-type": `image/${format}`
       },
       body: output,
       isBase64Encoded: true
-    };
+    }; */
   } catch (error) {
     console.log("Error", error);
 
