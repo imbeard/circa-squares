@@ -1,4 +1,3 @@
-const { builder } = require("@netlify/functions");
 const chromium = require("chrome-aws-lambda");
 
 function isFullUrl(url) {
@@ -261,4 +260,4 @@ async function handleInstagram(url, page, timeout) {
   return response;
 }
 
-exports.handler = builder(handler);
+exports.handler = handler;
