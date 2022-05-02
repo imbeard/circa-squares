@@ -5,3 +5,4 @@ directory = "functions"
 from = "/*"
 to = "/.netlify/functions/screenshot-background"
 status = 200
+force = true
