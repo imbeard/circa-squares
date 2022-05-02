@@ -18,8 +18,10 @@
     "url": "https://github.com/11ty/api-screenshot/issues"
   },
   "homepage": "https://github.com/11ty/api-screenshot#readme",
+  "devDependencies": {
+    "@netlify/functions": "^1.0.0"
+  },
   "dependencies": {
-    "@netlify/functions": "^1.0.0",
     "chrome-aws-lambda": "^10.1.0",
     "puppeteer-core": "^10.1.0"
   }
