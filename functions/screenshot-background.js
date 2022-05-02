@@ -205,7 +205,7 @@ async function handler(event, context) {
     console.log(url, format, { viewport }, { size }, { dpr }, { aspectratio });
 
     return {
-      statusCode: 200,
+      statusCode: 202,
       headers: {
         "content-type": `image/${format}`
       },
@@ -218,7 +218,7 @@ async function handler(event, context) {
     return {
       // We need to return 200 here or Firefox won’t display the image
       // HOWEVER a 200 means that if it times out on the first attempt it will stay the default image until the next build.
-      statusCode: 200,
+      statusCode: 202,
       // HOWEVER HOWEVER, we can set a ttl of 3600 which means that the image will be re-requested in an hour.
       ttl: 3600,
       headers: {
