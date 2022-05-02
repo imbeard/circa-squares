@@ -3,6 +3,6 @@ directory = "functions"
 
 [[redirects]]
 from = "/*"
-to = "/.netlify/builders/screenshot"
+to = "/.netlify/builders/screenshot-background"
 status = 200
 force = true
