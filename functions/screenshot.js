@@ -1,6 +1,6 @@
 const { builder } = require("@netlify/functions");
 const chromium = require("chrome-aws-lambda");
-const UserAgent = require('user-agents');
+const randomUseragent = require('random-useragent');
 
 function isFullUrl(url) {
   try {
@@ -35,9 +35,9 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   }
 
   // set random user agent
-  const userAgent = new UserAgent();
-  await page.setUserAgent(userAgent.toString());
-  console.log(userAgent.toString())
+  const userAgent = randomUseragent.getRandom();
+  await page.setUserAgent(userAgent);
+  console.log(userAgent)
 
   let response;
   if(url.indexOf('instagram.com') > -1) {
