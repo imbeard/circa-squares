@@ -1,5 +1,6 @@
 const { builder } = require("@netlify/functions");
 const chromium = require("chrome-aws-lambda");
+const UserAgent = require('user-agents');
 
 function isFullUrl(url) {
   try {
@@ -16,7 +17,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   timeout = Math.min(Math.max(timeout, 3000), 20000);
 
   const browser = await chromium.puppeteer.launch({
-    executablePath: await chromium.executablePath,
+    executablePath: '/opt/homebrew/bin/chromium', // await chromium.executablePath // '/opt/homebrew/bin/chromium'
     args: chromium.args,
     defaultViewport: {
       width: viewport[0],
@@ -27,20 +28,8 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   });
 
   const page = await browser.newPage();
-   if(url.indexOf('instagram') > -1){
-    await page.goto(url);
-
-    await page.waitForSelector('[type=submit]', {
-      state: 'visible',
-    });
-
-    await page.type('[name=username]', 'elbarbabrb'); // ->
-    await page.type('[type="password"]', 'cn4Wi3DpKDc6Jv'); // ->
-
-    await page.click('[type=submit]');
-    await page.waitForSelector('[placeholder=Search]', { state: 'visible' });
-  } 
-  
+   
+  await handleInstagram(url, page);
 
   if(!withJs) {
     page.setJavaScriptEnabled(false);
@@ -226,6 +215,31 @@ async function handler(event, context) {
       body: `<svg version="1.1" id="L4" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100" enable-background="new 0 0 0 0" xml:space="preserve"><circle fill="#000" stroke="none" cx="6" cy="50" r="6"><animate attributeName="opacity" dur="1s" values="0;1;0" repeatCount="indefinite" begin="0.1"/></circle><circle fill="#000" stroke="none" cx="26" cy="50" r="6"><animate attributeName="opacity" dur="1s" values="0;1;0" repeatCount="indefinite" begin="0.2"/></circle><circle fill="#000" stroke="none" cx="46" cy="50" r="6"><animate attributeName="opacity" dur="1s" values="0;1;0" repeatCount="indefinite" begin="0.3"/></circle></svg>`,
       isBase64Encoded: false,
     };
+  }
+}
+
+async function handleInstagram(url, page) {
+  if(url.indexOf('instagram.com') > -1) {
+    // set random user agent
+    const userAgent = new UserAgent();
+    await page.setUserAgent(userAgent.toString());
+
+    await page.goto(url);
+
+    // remove cookie notice
+    const div_selector_to_remove= "[role=presentation]";
+    await page.evaluate((sel) => {
+      var element = document.querySelector(sel);
+      element.parentNode.removeChild(element);
+    }, div_selector_to_remove);
+
+    await page.waitForSelector('[type=submit]', {
+      state: 'visible',
+    });
+    await page.type('[name=username]', 'elbarbabrb');
+    await page.type('[type="password"]', 'cn4Wi3DpKDc6Jv');
+    await page.click('[type=submit]');
+    await page.waitForNavigation();
   }
 }
 
