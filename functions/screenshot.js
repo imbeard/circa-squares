@@ -91,7 +91,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
 }
 
 // Based on https://github.com/DavidWells/netlify-functions-workshop/blob/master/lessons-code-complete/use-cases/13-returning-dynamic-images/functions/return-image.js
-exports.handler = async function (event) {
+async function handler(event, context) {
   // e.g. /https%3A%2F%2Fwww.11ty.dev%2F/small/1:1/smaller/
   let pathSplit = event.path.split("/").filter(entry => !!entry);
   let [url, size, aspectratio, zoom, cachebuster] = pathSplit;
@@ -260,4 +260,4 @@ async function handleInstagram(url, page, timeout) {
   return response;
 }
 
-//exports.handler = handler;
+exports.handler = handler;
