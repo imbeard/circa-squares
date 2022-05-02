@@ -203,7 +203,7 @@ async function handler(event, context) {
 
     // output to Function logs
     console.log(url, format, { viewport }, { size }, { dpr }, { aspectratio });
-
+    console.log(outuput)
     return {
       statusCode: 200,
       headers: {
