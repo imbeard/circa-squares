@@ -12,12 +12,12 @@ function isFullUrl(url) {
   }
 }
 
-async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait, timeout = 20000 }) {
+async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait, timeout = 8500 }) {
   // Must be between 3000 and 8500
-  timeout = Math.min(Math.max(timeout, 3000), 20000);
+  timeout = Math.min(Math.max(timeout, 3000), 8500);
 
   const browser = await chromium.puppeteer.launch({
-    executablePath: await chromium.executablePath, // await chromium.executablePath // '/opt/homebrew/bin/chromium'
+    executablePath: '/opt/homebrew/bin/chromium', // await chromium.executablePath // '/opt/homebrew/bin/chromium'
     args: chromium.args,
     defaultViewport: {
       width: viewport[0],
@@ -25,27 +25,43 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
       deviceScaleFactor: parseFloat(dpr),
     },
     headless: chromium.headless,
+    userDataDir: './.chromium_user_data',
   });
 
   const page = await browser.newPage();
-   
-  await handleInstagram(url, page);
 
   if(!withJs) {
     page.setJavaScriptEnabled(false);
   }
 
-  let response = await Promise.race([
-    page.goto(url, {
-      waitUntil: wait || ["load"],
-      timeout,
-    }),
-    new Promise(resolve => {
-      setTimeout(() => {
-        resolve(false); // false is expected below
-      }, timeout - 1500); // we need time to execute the window.stop before the top level timeout hits
-    }),
-  ]);
+  // set random user agent
+  const userAgent = new UserAgent();
+  await page.setUserAgent(userAgent.toString());
+  console.log(userAgent.toString())
+
+  let response;
+  if(url.indexOf('instagram.com') > -1) {
+    response = await Promise.race([
+      handleInstagram(url, page, timeout),
+      new Promise(resolve => {
+        setTimeout(() => {
+          resolve(false); // false is expected below
+        }, timeout  - 1500); // we need time to execute the window.stop before the top level timeout hits
+      }),
+    ]);
+  } else {
+    response = await Promise.race([
+      page.goto(url, {
+        waitUntil: wait || ["load"],
+        timeout,
+      }),
+      new Promise(resolve => {
+        setTimeout(() => {
+          resolve(false); // false is expected below
+        }, timeout  - 1500); // we need time to execute the window.stop before the top level timeout hits
+      }),
+    ]);
+  }
 
   if(response === false) { // timed out, resolved false
     await page.evaluate(() => window.stop());
@@ -218,29 +234,34 @@ async function handler(event, context) {
   }
 }
 
-async function handleInstagram(url, page) {
-  if(url.indexOf('instagram.com') > -1) {
-    // set random user agent
-    const userAgent = new UserAgent();
-    await page.setUserAgent(userAgent.toString());
+async function handleInstagram(url, page, timeout) {
+  let response = await page.goto(url);
 
-    await page.goto(url);
-
-    // remove cookie notice
-    const div_selector_to_remove= "[role=presentation]";
-    await page.evaluate((sel) => {
-      var element = document.querySelector(sel);
-      element.parentNode.removeChild(element);
-    }, div_selector_to_remove);
-
-    await page.waitForSelector('[type=submit]', {
-      state: 'visible',
-    });
-    await page.type('[name=username]', 'elbarbabrb');
-    await page.type('[type="password"]', 'cn4Wi3DpKDc6Jv');
-    await page.click('[type=submit]');
-    await page.waitForNavigation();
+  // check logged in
+  if (await page.$('header') !== null) {
+    console.log("Instagram - already logged in");
+    return response;
+  } else {
+    console.log("Instagram - handling login");
   }
+
+  // remove cookie notice
+  const div_selector_to_remove= "[role=presentation]";
+  await page.evaluate((sel) => {
+    var element = document.querySelector(sel);
+    element.parentNode.removeChild(element);
+  }, div_selector_to_remove);
+
+  // do login
+  await page.waitForSelector('[type=submit]');
+  await page.type('[name=username]', 'elbarbabrb');
+  await page.type('[type="password"]', 'cn4Wi3DpKDc6Jv');
+  await page.click('[type=submit]');
+  await page.waitForNavigation();
+
+  response = await page.goto(url);
+
+  return response;
 }
 
 exports.handler = builder(handler);
