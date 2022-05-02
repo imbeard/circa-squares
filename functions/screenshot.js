@@ -1,10 +1,6 @@
 const { builder } = require("@netlify/functions");
 const chromium = require("chrome-aws-lambda");
-//const UserAgent = require('user-agents');
-
-const dns = require('dns');
-const os = require('os');
-const ifaces = os.networkInterfaces();
+const UserAgent = require('user-agents');
 
 function isFullUrl(url) {
   try {
@@ -20,17 +16,8 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   // Must be between 3000 and 8500
   timeout = Math.min(Math.max(timeout, 3000), 8500);
 
-  let executablePath;
-  if(checkLocalHost()) {
-    console.log("1");
-    executablePath = '/opt/homebrew/bin/chromium';
-  } else {
-    console.log("2");
-    executablePath = await chromium.executablePath;
-  }
-
   const browser = await chromium.puppeteer.launch({
-    executablePath: executablePath,
+    executablePath: await chromium.executablePath, // await chromium.executablePath // '/opt/homebrew/bin/chromium'
     args: chromium.args,
     defaultViewport: {
       width: viewport[0],
@@ -48,9 +35,9 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   }
 
   // set random user agent
-  /*const userAgent = new UserAgent();
+  const userAgent = new UserAgent();
   await page.setUserAgent(userAgent.toString());
-  console.log(userAgent.toString())*/
+  console.log(userAgent.toString())
 
   let response;
   if(url.indexOf('instagram.com') > -1) {
@@ -275,29 +262,6 @@ async function handleInstagram(url, page, timeout) {
   response = await page.goto(url);
 
   return response;
-}
-
-function checkLocalHost(address){
-    return new Promise((resolve, reject) => {
-        dns.lookup(address, function(err, addr){
-            if(err){
-                resolve(false);
-                return;
-            }
-            try{
-                address = addr;
-                Object.keys(ifaces).forEach(function (ifname) {
-                    ifaces[ifname].forEach(function (iface) {
-                        if(iface.address === address)
-                            resolve(true);
-                    });
-                });
-                resolve(false);
-            }catch(err){
-                reject(err);
-            }
-        })
-    })
 }
 
 exports.handler = builder(handler);
