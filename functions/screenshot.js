@@ -2,7 +2,7 @@ const fs = require('fs');
 const { builder } = require("@netlify/functions");
 const chromium = require("chrome-aws-lambda");
 
-const instagramCookiesFilePath = 'instagram_cookies.json';
+const instagramCookiesFilePath = './instagram_cookies.json';
 
 function isFullUrl(url) {
   try {
