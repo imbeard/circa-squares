@@ -42,7 +42,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
       new Promise(resolve => {
         setTimeout(() => {
           resolve(false); // false is expected below
-        }, timeout  - 1500); // we need time to execute the window.stop before the top level timeout hits
+        }, timeout  - 500); // we need time to execute the window.stop before the top level timeout hits
       }),
     ]);
   } else {
