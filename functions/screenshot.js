@@ -1,4 +1,3 @@
-const { builder } = require("@netlify/functions");
 const chromium = require("chrome-aws-lambda");
 
 function isFullUrl(url) {
@@ -43,7 +42,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
       new Promise(resolve => {
         setTimeout(() => {
           resolve(false); // false is expected below
-        }, 8500); // we need time to execute the window.stop before the top level timeout hits
+        }, timeout  - 1500); // we need time to execute the window.stop before the top level timeout hits
       }),
     ]);
   } else {
@@ -203,22 +202,22 @@ async function handler(event, context) {
 
     // output to Function logs
     console.log(url, format, { viewport }, { size }, { dpr }, { aspectratio });
-
-    return {
-      statusCode: 200,
+    return output
+/*     return {
+      statusCode: 202,
       headers: {
         "content-type": `image/${format}`
       },
       body: output,
       isBase64Encoded: true
-    };
+    }; */
   } catch (error) {
     console.log("Error", error);
 
     return {
       // We need to return 200 here or Firefox won’t display the image
       // HOWEVER a 200 means that if it times out on the first attempt it will stay the default image until the next build.
-      statusCode: 200,
+      statusCode: 202,
       // HOWEVER HOWEVER, we can set a ttl of 3600 which means that the image will be re-requested in an hour.
       ttl: 3600,
       headers: {
@@ -256,9 +255,9 @@ async function handleInstagram(url, page, timeout) {
   await page.click('[type=submit]');
   await page.waitForNavigation();
 
-  response = await page.goto(url,{waitUntil: 'networkidle0'});
+  response = await page.goto(url);
 
   return response;
 }
 
-exports.handler = builder(handler);
+exports.handler = handler;
