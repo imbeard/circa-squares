@@ -2,7 +2,7 @@ const fs = require('fs');
 const { builder } = require("@netlify/functions");
 const chromium = require("chrome-aws-lambda");
 
-const instagramCookiesFilePath = './instagram_cookies.json';
+const instagramCookiesFilePath = '/tmp/instagram_cookies.json';
 
 function isFullUrl(url) {
   try {
@@ -249,6 +249,15 @@ async function handleInstagram(url, page) {
   }
 
   let response = await page.goto(url);
+
+  // remove cookie notice
+  const div_selector_to_remove= "[role=presentation]";
+  await page.evaluate((sel) => {
+    var element = document.querySelector(sel);
+    if(element && element.parentNode) {
+      element.parentNode.removeChild(element);
+    }
+  }, div_selector_to_remove);
 
   // check logged in
   if (await page.$('header') !== null) {
