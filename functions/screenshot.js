@@ -259,7 +259,10 @@ async function handleInstagram(url, page, timeout) {
   await page.click('[type=submit]');
   await page.waitForNavigation();
 
-  response = await page.goto(url);
+  await page.goto(url);
+  response = await page.waitForNavigation({
+    waitUntil: 'networkidle0',
+  });
 
   return response;
 }
