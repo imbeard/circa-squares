@@ -24,7 +24,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
       deviceScaleFactor: parseFloat(dpr),
     },
     headless: chromium.headless,
-    userDataDir: true,
+    userDataDir: './chromium_user_data',
   });
 
   const page = await browser.newPage();
