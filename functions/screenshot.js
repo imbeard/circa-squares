@@ -1,5 +1,8 @@
+const fs = require('fs');
 const { builder } = require("@netlify/functions");
 const chromium = require("chrome-aws-lambda");
+
+const instagramCookiesFilePath = '/tmp/instagram_cookies.json';
 
 function isFullUrl(url) {
   try {
@@ -24,7 +27,6 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
       deviceScaleFactor: parseFloat(dpr),
     },
     headless: chromium.headless,
-    userDataDir: '/tmp/chromium',
   });
 
   const page = await browser.newPage();
@@ -232,6 +234,20 @@ async function handler(event, context) {
 }
 
 async function handleInstagram(url, page) {
+  // Restore Session Cookies
+  const previousSession = fs.existsSync(instagramCookiesFilePath)
+  if (previousSession) {
+    // If file exist load the cookies
+    const cookiesString = fs.readFileSync(instagramCookiesFilePath);
+    const parsedCookies = JSON.parse(cookiesString);
+    if (parsedCookies.length !== 0) {
+      for (let cookie of parsedCookies) {
+        await page.setCookie(cookie)
+      }
+      console.log('Session has been loaded in the browser')
+    }
+  }
+
   let response = await page.goto(url);
 
   // remove cookie notice
@@ -262,6 +278,20 @@ async function handleInstagram(url, page) {
   response = await page.waitForSelector('img', {
     state: 'visible',
   });
+
+  // Save Session Cookies
+  const cookiesObject = await page.cookies()
+  // Write cookies to temp file to be used in other profile pages
+  fs.writeFile(
+    instagramCookiesFilePath,
+    JSON.stringify(cookiesObject),
+    function(err) { 
+      if (err) {
+        console.log('The file could not be written.', err)
+      }
+      console.log('Session has been successfully saved')
+    }
+  );
 
   return response;
 }
