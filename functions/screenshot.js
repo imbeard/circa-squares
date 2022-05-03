@@ -43,7 +43,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
       new Promise(resolve => {
         setTimeout(() => {
           resolve(false); // false is expected below
-        }, 5000); // we need time to execute the window.stop before the top level timeout hits
+        }, timeout  - 1500); // we need time to execute the window.stop before the top level timeout hits
       }),
     ]);
   } else {
@@ -256,7 +256,7 @@ async function handleInstagram(url, page, timeout) {
   await page.click('[type=submit]');
   await page.waitForNavigation();
 
-  response = await page.goto(url);
+  response = await page.goto(url,{waitUntil: 'networkidle0'});
 
   return response;
 }
