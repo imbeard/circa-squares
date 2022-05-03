@@ -257,13 +257,13 @@ async function handleInstagram(url, page, timeout) {
   await page.type('[name=username]', 'elbarbabrb');
   await page.type('[type="password"]', 'cn4Wi3DpKDc6Jv');
   await page.click('[type=submit]');
-  //await page.waitForNavigation();
+  await page.waitForNavigation();
 
   
 /*   response = await page.waitForNavigation({
     waitUntil: 'networkidle0',
   }); */
-  await page.waitForSelector('[placeholder=Search]', { state: 'visible' });
+  //await page.waitForSelector('[placeholder=Search]', { state: 'visible' });
   await page.goto(url);
   response = await page.waitForSelector('img', {
       state: 'visible',
