@@ -260,9 +260,11 @@ async function handleInstagram(url, page, timeout) {
   await page.waitForNavigation();
 
   await page.goto(url);
-  response = await page.waitForNavigation({
+/*   response = await page.waitForNavigation({
     waitUntil: 'networkidle0',
-  });
+  }); */
+  response = await page.waitForSelector('[placeholder=Search]', { state: 'visible' });
+
 
   return response;
 }
