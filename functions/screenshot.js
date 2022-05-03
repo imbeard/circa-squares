@@ -26,7 +26,7 @@ console.log(path.resolve(process.env.HOME))
       deviceScaleFactor: parseFloat(dpr),
     },
     headless: chromium.headless,
-    userDataDir: path.resolve(process.env.HOME, '.config/chromium')
+    userDataDir: '.netlify/chromium'
   });
 
   const page = await browser.newPage();
