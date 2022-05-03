@@ -18,7 +18,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
 console.log(process.env.HOME)
 console.log(path.resolve(process.env.HOME))
   const browser = await chromium.puppeteer.launch({
-    executablePath: '/opt/homebrew/bin/chromium', // await chromium.executablePath // '/opt/homebrew/bin/chromium'
+    executablePath: await chromium.executablePath, // await chromium.executablePath // '/opt/homebrew/bin/chromium'
     args: chromium.args,
     defaultViewport: {
       width: viewport[0],
