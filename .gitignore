@@ -1,5 +1,5 @@
 .DS_Store
-.config
+.chromium_user_data
 .netlify
 node_modules
 package-lock.json

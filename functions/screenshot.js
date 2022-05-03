@@ -14,7 +14,7 @@ function isFullUrl(url) {
 async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait, timeout = 25000 }) {
   // Must be between 3000 and 25000
   timeout = Math.min(Math.max(timeout, 3000), 25000);
-console.log(process.env.LAMBDA_TASK_ROOT || ".")
+
   const browser = await chromium.puppeteer.launch({
     executablePath: await chromium.executablePath, // await chromium.executablePath // '/opt/homebrew/bin/chromium'
     args: chromium.args,
@@ -24,7 +24,7 @@ console.log(process.env.LAMBDA_TASK_ROOT || ".")
       deviceScaleFactor: parseFloat(dpr),
     },
     headless: chromium.headless,
-    userDataDir: '.netlify/chromium'
+    userDataDir: process.env.LAMBDA_TASK_ROOT || "." + '/.chromium_user_data',
   });
 
   const page = await browser.newPage();
