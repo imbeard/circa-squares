@@ -288,8 +288,9 @@ async function handleInstagram(url, page) {
     function(err) { 
       if (err) {
         console.log('The file could not be written.', err)
+      } else {
+        console.log('Session has been successfully saved')
       }
-      console.log('Session has been successfully saved')
     }
   );
 
