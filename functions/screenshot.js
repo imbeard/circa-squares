@@ -1,3 +1,4 @@
+const { builder } = require("@netlify/functions");
 const chromium = require("chrome-aws-lambda");
 
 function isFullUrl(url) {
@@ -202,22 +203,22 @@ async function handler(event, context) {
 
     // output to Function logs
     console.log(url, format, { viewport }, { size }, { dpr }, { aspectratio });
-    return output
-/*     return {
-      statusCode: 202,
+
+    return {
+      statusCode: 200,
       headers: {
         "content-type": `image/${format}`
       },
       body: output,
       isBase64Encoded: true
-    }; */
+    };
   } catch (error) {
     console.log("Error", error);
 
     return {
       // We need to return 200 here or Firefox won’t display the image
       // HOWEVER a 200 means that if it times out on the first attempt it will stay the default image until the next build.
-      statusCode: 202,
+      statusCode: 200,
       // HOWEVER HOWEVER, we can set a ttl of 3600 which means that the image will be re-requested in an hour.
       ttl: 3600,
       headers: {
@@ -260,4 +261,4 @@ async function handleInstagram(url, page, timeout) {
   return response;
 }
 
-exports.handler = handler;
+exports.handler = builder(handler);
