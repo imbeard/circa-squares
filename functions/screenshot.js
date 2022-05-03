@@ -246,7 +246,10 @@ async function handleInstagram(url, page, timeout) {
   const div_selector_to_remove= "[role=presentation]";
   await page.evaluate((sel) => {
     var element = document.querySelector(sel);
-    element.parentNode.removeChild(element);
+    if(element.parentNode){
+      element.parentNode.removeChild(element);
+    }
+    
   }, div_selector_to_remove);
 
   // do login
