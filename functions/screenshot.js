@@ -243,14 +243,14 @@ async function handleInstagram(url, page, timeout) {
   }
 
   // remove cookie notice
-  const div_selector_to_remove= "[role=presentation]";
+/*   const div_selector_to_remove= "[role=presentation]";
   await page.evaluate((sel) => {
     var element = document.querySelector(sel);
     if(element.parentNode){
       element.parentNode.removeChild(element);
     }
     
-  }, div_selector_to_remove);
+  }, div_selector_to_remove); */
 
   // do login
   await page.waitForSelector('[type=submit]');
