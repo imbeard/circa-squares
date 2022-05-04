@@ -41,7 +41,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   let response;
   if(url.indexOf('instagram.com') > -1) {
     response = await Promise.race([
-      handleInstagram(url, page, timeout),
+      handleInstagram(url, page, wait),
       new Promise(resolve => {
         setTimeout(() => {
           resolve(false); // false is expected below
@@ -233,7 +233,7 @@ async function handler(event, context) {
   }
 }
 
-async function handleInstagram(url, page) {
+async function handleInstagram(url, page, wait) {
   // Restore Session Cookies
   const previousSession = fs.existsSync(instagramCookiesFilePath)
   if (previousSession) {
@@ -248,10 +248,12 @@ async function handleInstagram(url, page) {
     }
   }
 
-  let response = await page.goto(url);
+  let response = await page.goto(url, {
+    waitUntil: wait || ["load"]
+  });
 
   // remove cookie notice
-  const div_selector_to_remove= "[role=presentation]";
+  const div_selector_to_remove= "body > [role=presentation]";
   await page.evaluate((sel) => {
     var element = document.querySelector(sel);
     if(element && element.parentNode) {
@@ -260,7 +262,7 @@ async function handleInstagram(url, page) {
   }, div_selector_to_remove);
 
   // check logged in
-  if (await page.$('header') !== null) {
+  if (await page.$('article') !== null) {
     console.log("Instagram - already logged in");
     return response;
   } else {
@@ -274,9 +276,8 @@ async function handleInstagram(url, page) {
   await page.click('[type=submit]');
   await page.waitForNavigation();
 
-  await page.goto(url);
-  response = await page.waitForSelector('img', {
-    state: 'visible',
+  response = await page.goto(url, {
+    waitUntil: wait || ["load"]
   });
 
   // Save Session Cookies
