@@ -19,7 +19,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   timeout = Math.min(Math.max(timeout, 3000), 25000);
 
   const browser = await chromium.puppeteer.launch({
-    executablePath: await chromium.executablePath, // await chromium.executablePath // '/opt/homebrew/bin/chromium'
+    executablePath: '/opt/homebrew/bin/chromium', // await chromium.executablePath // '/opt/homebrew/bin/chromium'
     args: chromium.args,
     defaultViewport: {
       width: viewport[0],
@@ -69,6 +69,11 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
 
   if(response === false) { // timed out, resolved false
     await page.evaluate(() => window.stop());
+  }
+
+  // handle circa website (live and staging)
+  if(url.indexOf('circa.art') > -1 || url.indexOf('wordpress-347619-2422041.cloudwaysapps.com') > -1) {
+    handleCirca(page);
   }
 
   // let statusCode = response.status();
@@ -260,7 +265,7 @@ async function handleInstagram(url, page, wait) {
   // remove cookie notice
   const div_selector_to_remove= "body > [role=presentation]";
   await page.evaluate((sel) => {
-    var element = document.querySelector(sel);
+    const element = document.querySelector(sel);
     if(element && element.parentNode) {
       element.parentNode.removeChild(element);
     }
@@ -301,6 +306,19 @@ async function handleInstagram(url, page, wait) {
   );
 
   return response;
+}
+
+async function handleCirca(page) {
+  // remove header and footer
+  const div_selector_to_remove= "header, footer";
+  await page.evaluate((sel) => {
+    const elements = document.querySelectorAll(sel);
+    for(let i=0; i< elements.length; i++){
+      if(elements[i] && elements[i].parentNode) {
+        elements[i].parentNode.removeChild(elements[i]);
+      }
+    }
+  }, div_selector_to_remove);
 }
 
 exports.handler = builder(handler);
