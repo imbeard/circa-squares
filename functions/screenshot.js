@@ -36,9 +36,9 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   }
 
   // set user agent
-  // safari on ios for mobile, chrome on windows for desktop
+  // chrome on android for mobile, chrome on windows for desktop
   if(viewport[0] < 1024) {
-    await page.setUserAgent('Mozilla/5.0 (iPhone; CPU iPhone OS 15_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Mobile/15E148 Safari/604.1');
+    await page.setUserAgent('Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.41 Mobile Safari/537.36');
   } else {
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36');
   }
