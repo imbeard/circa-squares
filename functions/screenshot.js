@@ -14,7 +14,7 @@ function isFullUrl(url) {
   }
 }
 
-async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait, timeout = 25000 }) {
+async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait, timeout = 25000, colorscheme }) {
   // Must be between 3000 and 25000
   timeout = Math.min(Math.max(timeout, 3000), 25000);
 
@@ -33,6 +33,13 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
 
   if(!withJs) {
     page.setJavaScriptEnabled(false);
+  }
+
+  // set color scheme
+  if(colorscheme && (colorscheme == 'light' || colorscheme == 'dark')) {
+    await page.emulateMediaFeatures([{
+      name: 'prefers-color-scheme', value: colorscheme
+    }]);
   }
 
   // set user agent
@@ -107,7 +114,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
 async function handler(event, context) {
   // e.g. /https%3A%2F%2Fwww.11ty.dev%2F/small/1:1/smaller/
   let pathSplit = event.path.split("/").filter(entry => !!entry);
-  let [url, size, aspectratio, zoom, cachebuster] = pathSplit;
+  let [url, size, aspectratio, colorscheme, zoom, cachebuster] = pathSplit;
   let format = "jpeg"; // hardcoded for now, but png and webp are supported!
   let viewport = [];
 
@@ -120,6 +127,10 @@ async function handler(event, context) {
   if(aspectratio && aspectratio.startsWith("_")) {
     cachebuster = aspectratio;
     aspectratio = undefined;
+  }
+  if(colorscheme && colorscheme.startsWith("_")) {
+    cachebuster = colorscheme;
+    colorscheme = undefined;
   }
   if(zoom && zoom.startsWith("_")) {
     cachebuster = zoom;
@@ -211,6 +222,7 @@ async function handler(event, context) {
       dpr,
       wait,
       timeout,
+      colorscheme,
     });
 
     // output to Function logs
