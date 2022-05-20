@@ -331,6 +331,10 @@ async function handleCirca(page) {
       }
     }
   }, div_selector_to_remove);
+
+  // remove main tag padding top
+  let mainElem = await page.$('main');
+  await mainElem.evaluate((el) => el.style.paddingTop = 0);
 }
 
 exports.handler = builder(handler);
