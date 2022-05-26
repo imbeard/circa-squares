@@ -293,8 +293,8 @@ async function handleInstagram(url, page, wait) {
 
   // do login
   await page.waitForSelector('[type=submit]');
-  await page.type('[name=username]', 'elbarbabrb');
-  await page.type('[type="password"]', 'cn4Wi3DpKDc6Jv');
+  await page.type('[name=username]', 'circa.art.service');
+  await page.type('[type="password"]', 'HJVp99wXsnREQrm');
   await page.click('[type=submit]');
   await page.waitForNavigation();
 
