@@ -31,6 +31,8 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
 
   const page = await browser.newPage();
 
+  console.log('cachebuster string: ' + date.getFullYear() + parseInt(date.getMonth() + 1) + date.getDate() + date.getHours());
+
   if(!withJs) {
     page.setJavaScriptEnabled(false);
   }
@@ -76,8 +78,8 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
 
   if(response === false) { // timed out, resolved false
     // await page.evaluate(() => window.stop()); // stop loading page to take screenshot anyway of what is on the page so far
-    await browser.close(); // OR close the brawser
-    throw new Error(`Timed out`); // and do not return an image so it have to be requested again, instead throw error
+    await browser.close(); // OR close the browser
+    throw new Error(`Timed out`); // throw error and do not return an image so it have to be requested again
   }
 
   // handle circa website (live and staging)
