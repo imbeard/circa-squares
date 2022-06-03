@@ -77,7 +77,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   if(response === false) { // timed out, resolved false
     // await page.evaluate(() => window.stop()); // stop loading page to take screenshot anyway of what is on the page so far
     await browser.close(); // OR close the brawser
-    return false; // and do not return an image so it have to be requested again
+    throw new Error(`Timed out`); // and do not return an image so it have to be requested again, instead throw error
   }
 
   // handle circa website (live and staging)
@@ -244,11 +244,12 @@ async function handler(event, context) {
     return {
       // We need to return 200 here or Firefox won’t display the image
       // HOWEVER a 200 means that if it times out on the first attempt it will stay the default image until the next build.
-      statusCode: 200,
+      // statusCode: 200,
+      statusCode: 500,
       // HOWEVER HOWEVER, we can set a ttl of 3600 which means that the image will be re-requested in an hour.
-      ttl: 3600,
+      // ttl: 3600,
       headers: {
-        "content-type": `image/${format}`,
+        // "content-type": `image/${format}`,
         "x-error-message": error.message
       },
       body: ``,
