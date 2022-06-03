@@ -31,6 +31,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
 
   const page = await browser.newPage();
 
+  const date = new Date();
   console.log('cachebuster string: ' + date.getFullYear() + parseInt(date.getMonth() + 1) + date.getDate() + date.getHours());
 
   if(!withJs) {
