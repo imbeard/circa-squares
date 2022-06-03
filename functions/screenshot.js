@@ -208,7 +208,7 @@ async function handler(event, context) {
   }
 
   url = decodeURIComponent(url);
-  url += '?puppy'
+  url += '#puppy'
 
   try {
     if(!isFullUrl(url)) {
