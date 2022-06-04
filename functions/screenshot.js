@@ -311,8 +311,6 @@ async function handleInstagram(url, page, wait) {
     }),
   ]);
 
-  response.catch(e) {};
-
   if(response === false) {
     throw new Error(`Instagram - login failed`);
   }
