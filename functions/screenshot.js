@@ -82,8 +82,8 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
     // throw new Error(`Timed out`); // throw error and do not return an image so it have to be requested again
   }
 
-  // handle circa website (live and staging)
-  if(url.indexOf('circa.art') > -1 || url.indexOf('wordpress-347619-2422041.cloudwaysapps.com') > -1) {
+  // handle circa website (local, staging and live)
+  if(url.indexOf('circa.local') > -1 || url.indexOf('wordpress-347619-2422041.cloudwaysapps.com') > -1 || url.indexOf('circa.art') > -1) {
     handleCirca(page);
   }
 
@@ -218,6 +218,13 @@ async function handler(event, context) {
 
     if(!viewport || viewport.length !== 2) {
       throw new Error("Incorrect API usage. Expects one of: /:url/ or /:url/:size/ or /:url/:size/:aspectratio/")
+    }
+
+    const urlObj = new URL(url);
+    if(urlObj) {
+      const puppy = parseInt(urlObj.searchParams.get("puppy")) + 1;
+      urlObj.searchParams.set("puppy", puppy);
+      url = urlObj.toString();
     }
 
     let output = await screenshot(url, {
