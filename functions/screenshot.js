@@ -4,8 +4,6 @@ const chromium = require("chrome-aws-lambda");
 
 const instagramCookiesFilePath = '/tmp/instagram_cookies.json';
 
-let browserWSEndpoint;
-
 function isFullUrl(url) {
   try {
     new URL(url);
@@ -22,28 +20,16 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
 
   const path = process.env.NETLIFY_DEV ? '/opt/homebrew/bin/chromium' : await chromium.executablePath;
 
-  let browser;
-
-  if (browserWSEndpoint) {
-    console.log("connecting to existing browser");
-    browser = await chromium.puppeteer.connect({ browserWSEndpoint })
-  }
-
-  if (!browser || !browser.isConnected()) {
-    console.log("launching browser");
-    browser = await chromium.puppeteer.launch({
-      executablePath: path,
-      args: chromium.args,
-      defaultViewport: {
-        width: viewport[0],
-        height: viewport[1],
-        deviceScaleFactor: parseFloat(dpr),
-      },
-      headless: chromium.headless,
-    });
-    await browser.newPage();
-    browserWSEndpoint = await browser.wsEndpoint();
-  }
+  const browser = await chromium.puppeteer.launch({
+    executablePath: path,
+    args: chromium.args,
+    defaultViewport: {
+      width: viewport[0],
+      height: viewport[1],
+      deviceScaleFactor: parseFloat(dpr),
+    },
+    headless: chromium.headless,
+  });
 
   const page = await browser.newPage();
 
@@ -91,9 +77,9 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   }
 
   if(response === false) { // timed out, resolved false
-    // await page.evaluate(() => window.stop()); // stop loading page to take screenshot anyway of what is on the page so far
-    await browser.close(); // OR close the browser
-    throw new Error(`Timed out`); // throw error and do not return an image so it have to be requested again
+    await page.evaluate(() => window.stop()); // stop loading page to take screenshot anyway of what is on the page so far
+    // await browser.close(); // OR close the browser
+    // throw new Error(`Timed out`); // throw error and do not return an image so it have to be requested again
   }
 
   // handle circa website (local, staging and live)
@@ -123,8 +109,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
 
   let output = await page.screenshot(options);
 
-  if (page) await page.close();
-  //await browser.close();
+  await browser.close();
 
   return output;
 }
@@ -235,12 +220,12 @@ async function handler(event, context) {
       throw new Error("Incorrect API usage. Expects one of: /:url/ or /:url/:size/ or /:url/:size/:aspectratio/")
     }
 
-    /*const urlObj = new URL(url);
+    const urlObj = new URL(url);
     if(urlObj) {
       const puppy = parseInt(urlObj.searchParams.get("puppy")) - 2;
       urlObj.searchParams.set("puppy", puppy);
       url = urlObj.toString();
-    }*/
+    }
 
     let output = await screenshot(url, {
       format,
