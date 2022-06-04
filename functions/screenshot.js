@@ -39,6 +39,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
       },
       headless: chromium.headless,
     });
+    browser.newPage();
     browserWSEndpoint = browser.wsEndpoint()
   }
 
