@@ -222,7 +222,7 @@ async function handler(event, context) {
 
     const urlObj = new URL(url);
     if(urlObj) {
-      const puppy = parseInt(urlObj.searchParams.get("puppy")) + 1;
+      const puppy = parseInt(urlObj.searchParams.get("puppy")) - 2;
       urlObj.searchParams.set("puppy", puppy);
       url = urlObj.toString();
     }
