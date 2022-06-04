@@ -9,7 +9,7 @@ function isFullUrl(url) {
     new URL(url);
     return true;
   } catch(e) {
-    // invalid url OR local path
+    // invalid url OR local path test
     return false;
   }
 }
