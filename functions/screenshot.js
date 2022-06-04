@@ -18,8 +18,10 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   // Must be between 3000 and 25000
   timeout = Math.min(Math.max(timeout, 3000), 25000);
 
+  const path = process.env.NETLIFY_DEV ? '/opt/homebrew/bin/chromium' : await chromium.executablePath;
+
   const browser = await chromium.puppeteer.launch({
-    executablePath: await chromium.executablePath, // await chromium.executablePath // '/opt/homebrew/bin/chromium'
+    executablePath: path,
     args: chromium.args,
     defaultViewport: {
       width: viewport[0],
@@ -239,7 +241,7 @@ async function handler(event, context) {
       isBase64Encoded: true
     };
   } catch (error) {
-    console.log("Error", error);
+    console.log(error);
 
     return {
       // We need to return 200 here or Firefox won’t display the image
@@ -299,7 +301,19 @@ async function handleInstagram(url, page, wait) {
   await page.type('[name=username]', 'circa.art.service');
   await page.type('[type="password"]', 'HJVp99wXsnREQrm');
   await page.click('[type=submit]');
-  await page.waitForNavigation();
+
+  // check login success or failure
+  response = await Promise.race([
+    page.waitForNavigation(),
+    new Promise(resolve => {
+      page.waitForSelector('#slfErrorAlert')
+      resolve(false);
+    }),
+  ]);
+
+  if(response === false) {
+    throw new Error(`Instagram - login failed`);
+  }
 
   response = await page.goto(url, {
     waitUntil: wait || ["load"]
