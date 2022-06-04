@@ -30,7 +30,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
     },
     userDataDir: '/tmp/user-data-dir',
     headless: true,
-    args: ['--no-sandbox'],
+    //args: ['--no-sandbox'],
   });
 
   const page = await browser.newPage();
@@ -92,6 +92,9 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   if(url.indexOf('circa.local') > -1 || url.indexOf('wordpress-347619-2422041.cloudwaysapps.com') > -1 || url.indexOf('circa.art') > -1) {
     handleCirca(page);
   }
+
+  console.log("response from cache:");
+  console.log(response.fromCache());
 
   // let statusCode = response.status();
   // TODO handle 4xx/5xx status codes better
