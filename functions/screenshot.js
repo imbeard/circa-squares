@@ -77,9 +77,9 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   }
 
   if(response === false) { // timed out, resolved false
-    // await page.evaluate(() => window.stop()); // stop loading page to take screenshot anyway of what is on the page so far
-    await browser.close(); // OR close the browser
-    throw new Error(`Timed out`); // throw error and do not return an image so it have to be requested again
+    await page.evaluate(() => window.stop()); // stop loading page to take screenshot anyway of what is on the page so far
+    // await browser.close(); // OR close the browser
+    // throw new Error(`Timed out`); // throw error and do not return an image so it have to be requested again
   }
 
   // handle circa website (live and staging)
