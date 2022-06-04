@@ -75,12 +75,8 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   }
 
   if(response === false) { // timed out, resolved false
-    if(wait.includes('networkidle0')) {
-      await browser.close();
-      throw new Error(`Timed out`); // throw error and do not return an image so it have to be requested again
-    } else {
-      await page.evaluate(() => window.stop()); // stop loading page to take screenshot anyway of what is on the page so far
-    }
+    await browser.close();
+    throw new Error(`Timed out`); // throw error and do not return an image so it have to be requested again
   }
 
   // handle circa website (live and staging)
@@ -211,8 +207,6 @@ async function handler(event, context) {
   }
 
   url = decodeURIComponent(url);
-
-  url += '#puppy';
 
   try {
     if(!isFullUrl(url)) {
