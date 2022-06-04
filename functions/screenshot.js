@@ -249,7 +249,7 @@ async function handler(event, context) {
       // statusCode: 200,
       statusCode: 500,
       // HOWEVER HOWEVER, we can set a ttl of 3600 which means that the image will be re-requested in an hour.
-      // ttl: 3600,
+      ttl: 10,
       headers: {
         // "content-type": `image/${format}`,
         "x-error-message": error.message
