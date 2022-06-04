@@ -25,10 +25,12 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   let browser;
 
   if (browserWSEndpoint) {
+    console.log("connecting to existing browser");
     browser = await chromium.puppeteer.connect({ browserWSEndpoint })
   }
 
   if (!browser || !browser.isConnected()) {
+    console.log("launching browser");
     browser = await chromium.puppeteer.launch({
       executablePath: path,
       args: chromium.args,
@@ -40,7 +42,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
       headless: chromium.headless,
     });
     await browser.newPage();
-    browserWSEndpoint = await browser.wsEndpoint()
+    browserWSEndpoint = await browser.wsEndpoint();
   }
 
   const page = await browser.newPage();
@@ -121,6 +123,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
 
   let output = await page.screenshot(options);
 
+  if (page) await page.close();
   //await browser.close();
 
   return output;
