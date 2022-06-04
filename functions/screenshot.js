@@ -209,6 +209,8 @@ async function handler(event, context) {
 
   url = decodeURIComponent(url);
 
+  url += '?puppy';
+
   try {
     if(!isFullUrl(url)) {
       throw new Error(`Invalid \`url\`: ${url}`);
