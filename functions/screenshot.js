@@ -14,9 +14,9 @@ function isFullUrl(url) {
   }
 }
 
-async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait, timeout = 23000, colorscheme }) {
-  // Must be between 3000 and 23000
-  timeout = Math.min(Math.max(timeout, 3000), 23000);
+async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait, timeout = 25000, colorscheme }) {
+  // Must be between 3000 and 25000
+  timeout = Math.min(Math.max(timeout, 3000), 25000);
 
   const path = process.env.NETLIFY_DEV ? '/opt/homebrew/bin/chromium' : await chromium.executablePath;
 
@@ -29,14 +29,9 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
       deviceScaleFactor: parseFloat(dpr),
     },
     headless: chromium.headless,
-    userDataDir: '/tmp/user-data-dir',
   });
 
   const page = await browser.newPage();
-
-  await page._client.send('Network.setCacheDisabled', {
-    cacheDisabled: false
-  });
 
   if(!withJs) {
     page.setJavaScriptEnabled(false);
@@ -82,18 +77,15 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   }
 
   if(response === false) { // timed out, resolved false
-    // await page.evaluate(() => window.stop()); // stop loading page to take screenshot anyway of what is on the page so far
-    await browser.close(); // OR close the browser
-    throw new Error(`Timed out`); // throw error and do not return an image so it have to be requested again
+    await page.evaluate(() => window.stop()); // stop loading page to take screenshot anyway of what is on the page so far
+    // await browser.close(); // OR close the browser
+    // throw new Error(`Timed out`); // throw error and do not return an image so it have to be requested again
   }
 
   // handle circa website (local, staging and live)
   if(url.indexOf('circa.local') > -1 || url.indexOf('wordpress-347619-2422041.cloudwaysapps.com') > -1 || url.indexOf('circa.art') > -1) {
     handleCirca(page);
   }
-
-  console.log("response from cache:");
-  console.log(response.fromCache());
 
   // let statusCode = response.status();
   // TODO handle 4xx/5xx status codes better
@@ -228,12 +220,12 @@ async function handler(event, context) {
       throw new Error("Incorrect API usage. Expects one of: /:url/ or /:url/:size/ or /:url/:size/:aspectratio/")
     }
 
-    /*const urlObj = new URL(url);
+    const urlObj = new URL(url);
     if(urlObj) {
       const puppy = parseInt(urlObj.searchParams.get("puppy")) - 2;
       urlObj.searchParams.set("puppy", puppy);
       url = urlObj.toString();
-    }*/
+    }
 
     let output = await screenshot(url, {
       format,
@@ -256,7 +248,6 @@ async function handler(event, context) {
       isBase64Encoded: true
     };
   } catch (error) {
-    console.log(url, format, { viewport }, { size }, { dpr }, { aspectratio });
     console.log(error);
 
     return {
@@ -266,7 +257,6 @@ async function handler(event, context) {
       statusCode: 500,
       // HOWEVER HOWEVER, we can set a ttl of 3600 which means that the image will be re-requested in an hour.
       // ttl: 3600,
-      ttl: 60,
       headers: {
         // "content-type": `image/${format}`,
         "x-error-message": error.message
