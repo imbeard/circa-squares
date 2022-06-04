@@ -22,7 +22,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
 
   const browser = await chromium.puppeteer.launch({
     executablePath: path,
-    //args: chromium.args,
+    args: chromium.args,
     defaultViewport: {
       width: viewport[0],
       height: viewport[1],
