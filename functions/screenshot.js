@@ -306,7 +306,9 @@ async function handleInstagram(url, page, wait) {
   response = await Promise.race([
     page.waitForNavigation(),
     new Promise(resolve => {
-      page.waitForSelector('#slfErrorAlert')
+      try {
+        page.waitForSelector('#slfErrorAlert')
+      } catch(e) {}
       resolve(false);
     }),
   ]);
