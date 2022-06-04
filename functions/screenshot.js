@@ -14,9 +14,9 @@ function isFullUrl(url) {
   }
 }
 
-async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait, timeout = 24000, colorscheme }) {
-  // Must be between 3000 and 24000
-  timeout = Math.min(Math.max(timeout, 3000), 24000);
+async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait, timeout = 26000, colorscheme }) {
+  // Must be between 3000 and 26000
+  timeout = Math.min(Math.max(timeout, 3000), 26000);
 
   const path = process.env.NETLIFY_DEV ? '/opt/homebrew/bin/chromium' : await chromium.executablePath;
 
@@ -257,6 +257,7 @@ async function handler(event, context) {
       statusCode: 500,
       // HOWEVER HOWEVER, we can set a ttl of 3600 which means that the image will be re-requested in an hour.
       // ttl: 3600,
+      ttl: 60,
       headers: {
         // "content-type": `image/${format}`,
         "x-error-message": error.message
