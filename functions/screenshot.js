@@ -306,12 +306,12 @@ async function handleInstagram(url, page, wait) {
   response = await Promise.race([
     page.waitForNavigation(),
     new Promise(resolve => {
-      try {
-        page.waitForSelector('#slfErrorAlert')
-      } catch(e) {}
+      page.waitForSelector('#slfErrorAlert', { timeout: 5000 })
       resolve(false);
     }),
   ]);
+
+  response.catch(e) {};
 
   if(response === false) {
     throw new Error(`Instagram - login failed`);
