@@ -22,16 +22,22 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
 
   const browser = await chromium.puppeteer.launch({
     executablePath: path,
-    args: chromium.args,
+    //args: chromium.args,
     defaultViewport: {
       width: viewport[0],
       height: viewport[1],
       deviceScaleFactor: parseFloat(dpr),
     },
-    headless: chromium.headless,
+    userDataDir: '/tmp/user-data-dir',
+    headless: true,
+    args: ['--no-sandbox'],
   });
 
   const page = await browser.newPage();
+
+  await page._client.send('Network.setCacheDisabled', {
+    cacheDisabled: false
+  });
 
   if(!withJs) {
     page.setJavaScriptEnabled(false);
