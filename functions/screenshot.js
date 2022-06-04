@@ -84,7 +84,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
 
   // handle circa website (live and staging)
   if(url.indexOf('circa.art') > -1 || url.indexOf('wordpress-347619-2422041.cloudwaysapps.com') > -1) {
-    handleCirca(page);
+    //handleCirca(page);
   }
 
   // let statusCode = response.status();
