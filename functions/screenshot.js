@@ -14,9 +14,9 @@ function isFullUrl(url) {
   }
 }
 
-async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait, timeout = 26000, colorscheme }) {
-  // Must be between 3000 and 26000
-  timeout = Math.min(Math.max(timeout, 3000), 26000);
+async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait, timeout = 23000, colorscheme }) {
+  // Must be between 3000 and 23000
+  timeout = Math.min(Math.max(timeout, 3000), 23000);
 
   const path = process.env.NETLIFY_DEV ? '/opt/homebrew/bin/chromium' : await chromium.executablePath;
 
@@ -248,6 +248,7 @@ async function handler(event, context) {
       isBase64Encoded: true
     };
   } catch (error) {
+    console.log(url, format, { viewport }, { size }, { dpr }, { aspectratio });
     console.log(error);
 
     return {
