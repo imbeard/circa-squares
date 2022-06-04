@@ -77,9 +77,9 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   }
 
   if(response === false) { // timed out, resolved false
-    await page.evaluate(() => window.stop()); // stop loading page to take screenshot anyway of what is on the page so far
-    // await browser.close(); // OR close the browser
-    // throw new Error(`Timed out`); // throw error and do not return an image so it have to be requested again
+    // await page.evaluate(() => window.stop()); // stop loading page to take screenshot anyway of what is on the page so far
+    await browser.close(); // OR close the browser
+    throw new Error(`Timed out`); // throw error and do not return an image so it have to be requested again
   }
 
   // handle circa website (local, staging and live)
@@ -220,12 +220,12 @@ async function handler(event, context) {
       throw new Error("Incorrect API usage. Expects one of: /:url/ or /:url/:size/ or /:url/:size/:aspectratio/")
     }
 
-    const urlObj = new URL(url);
+    /*const urlObj = new URL(url);
     if(urlObj) {
       const puppy = parseInt(urlObj.searchParams.get("puppy")) - 2;
       urlObj.searchParams.set("puppy", puppy);
       url = urlObj.toString();
-    }
+    }*/
 
     let output = await screenshot(url, {
       format,
