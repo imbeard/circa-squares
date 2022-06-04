@@ -14,9 +14,9 @@ function isFullUrl(url) {
   }
 }
 
-async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait, timeout = 25000, colorscheme }) {
-  // Must be between 3000 and 25000
-  timeout = Math.min(Math.max(timeout, 3000), 25000);
+async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait, timeout = 24000, colorscheme }) {
+  // Must be between 3000 and 24000
+  timeout = Math.min(Math.max(timeout, 3000), 24000);
 
   const path = process.env.NETLIFY_DEV ? '/opt/homebrew/bin/chromium' : await chromium.executablePath;
 
