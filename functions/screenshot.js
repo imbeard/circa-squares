@@ -77,13 +77,13 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   }
 
   if(response === false) { // timed out, resolved false
-    // await page.evaluate(() => window.stop()); // stop loading page to take screenshot anyway of what is on the page so far
-    await browser.close(); // OR close the browser
-    throw new Error(`Timed out`); // throw error and do not return an image so it have to be requested again
+    await page.evaluate(() => window.stop()); // stop loading page to take screenshot anyway of what is on the page so far
+    // await browser.close(); // OR close the browser
+    // throw new Error(`Timed out`); // throw error and do not return an image so it have to be requested again
   }
 
-  // handle circa website (local, staging and live)
-  if(url.indexOf('circa.local') > -1 || url.indexOf('wordpress-347619-2422041.cloudwaysapps.com') > -1 || url.indexOf('circa.art') > -1) {
+  // handle circa website (live and staging)
+  if(url.indexOf('circa.art') > -1 || url.indexOf('wordpress-347619-2422041.cloudwaysapps.com') > -1) {
     handleCirca(page);
   }
 
