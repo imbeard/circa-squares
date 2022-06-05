@@ -220,12 +220,12 @@ async function handler(event, context) {
       throw new Error("Incorrect API usage. Expects one of: /:url/ or /:url/:size/ or /:url/:size/:aspectratio/")
     }
 
-    const urlObj = new URL(url);
+    /*const urlObj = new URL(url);
     if(urlObj) {
       const puppy = parseInt(urlObj.searchParams.get("puppy")) - 2;
       urlObj.searchParams.set("puppy", puppy);
       url = urlObj.toString();
-    }
+    }*/
 
     let output = await screenshot(url, {
       format,
