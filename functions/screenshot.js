@@ -312,8 +312,8 @@ async function handleInstagram(url, page, wait) {
   // check login success or failure
   response = await Promise.race([
     page.waitForNavigation(),
-    new Promise(resolve => {
-      page.waitForSelector('#slfErrorAlert').catch((e) => {});
+    new Promise(resolve => async() => {
+      await page.waitForSelector('#slfErrorAlert', { timeout: 5000 }).catch((e) => {});
       resolve(false);
     }),
   ]);
