@@ -107,8 +107,8 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
     options.quality = 80;
   }
 
-  //let output = await page.screenshot(options);
-  let output = await Promise.race([page.screenshot(options), new Promise((resolve, reject) => setTimeout(reject, 5000))]);
+  let output = await page.screenshot(options);
+
   await browser.close();
 
   return output;
