@@ -359,9 +359,6 @@ async function handleCirca(page) {
   // remove main tag padding top
   let mainElem = await page.$('main');
   await mainElem.evaluate((el) => el.style.paddingTop = 0);
-
-  // wait custom javascript operations on site in under 100ms
-  await new Promise(resolve => setTimeout(resolve, 1000));
 }
 
 exports.handler = builder(handler);
