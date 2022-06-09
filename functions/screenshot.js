@@ -108,7 +108,6 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   }
 
 
-  await page.waitForTimeout(3000);
   let output = await page.screenshot(options);
 
   await browser.close();
