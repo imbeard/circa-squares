@@ -361,7 +361,7 @@ async function handleCirca(page) {
   await mainElem.evaluate((el) => el.style.paddingTop = 0);
 
   // wait custom javascript operations on site in under 100ms
-  await new Promise(resolve => setTimeout(resolve, 100));
+  await new Promise(resolve => setTimeout(resolve, 1000));
 }
 
 exports.handler = builder(handler);
