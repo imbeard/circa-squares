@@ -107,13 +107,8 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
     options.quality = 80;
   }
 
-function delay(time) {
-   return new Promise(function(resolve) { 
-       setTimeout(resolve, time)
-   });
-}
 
-  await delay(4000);
+  await page.waitForTimeout(3000);
   let output = await page.screenshot(options);
 
   await browser.close();
