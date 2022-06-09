@@ -107,6 +107,19 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
     options.quality = 80;
   }
 
+  await page.evaluate((sel) => {
+    const element = document.querySelector(sel);
+    if(element) {
+      document.querySelectorAll(element).forEach((item) => {
+      const originalPrice = parseFloat(item.innerHTML.replace('£', '').replace(',', ''));
+      const vat = parseFloat(((originalPrice * 20) / 100).toFixed(2));
+      const newPrice = (originalPrice + vat).toLocaleString('en');
+      item.innerHTML = '£' + newPrice;
+      item.dataset.price = newPrice;
+      item.dataset.updated = true;
+    });
+    }
+  }, '.wps-product-individual-price:not([data-updated])');
 
   let output = await page.screenshot(options);
 
